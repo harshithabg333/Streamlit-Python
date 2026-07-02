@@ -1,29 +1,14 @@
-name: Deploy to EC2
-
-on:
-  push:
-    branches: [ main ]
-
+name: Test Secrets
+on: push
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/my-app
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/harshithabg333/Streamlit-Python.git .
-            else
-              git pull origin main
-            fi
-            pip install -r requirements.txt
-            pkill -f streamlit || true
-            nohup streamlit run form_app.py --server.port 8501 &
+      - name: Print Secrets
+        run: |
+          echo "Host is: ${{ secrets.EC2_HOST }}"
+          if [ -z "${{ secrets.EC2_HOST }}" ]; then
+            echo "Error: Host is EMPTY"
+          else
+            echo "Success: Host is set"
+          fi
